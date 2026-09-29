@@ -239,20 +239,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 
       {/* Monthly Contribution Matrix for Selected Month */}
       <div className="bg-white rounded-2xl border border-amber-200/70 shadow-sm overflow-hidden">
-        <div className="festive-card-header p-4 border-b border-amber-200 flex items-center justify-between">
-          <div>
-            <h3 className="font-extrabold text-stone-900 text-sm sm:text-base flex items-center gap-2">
-              <span>Member Status</span>
-              <span className="text-xs bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-md">
+        <div className="festive-card-header p-3.5 sm:p-4 border-b border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="font-extrabold text-stone-900 text-sm sm:text-base whitespace-nowrap">
+                Member Status
+              </h3>
+              <span className="text-[11px] sm:text-xs bg-amber-200 text-amber-900 font-extrabold px-2.5 py-0.5 rounded-lg whitespace-nowrap">
                 {currentMonth.monthName}
               </span>
-            </h3>
-            <p className="text-xs text-stone-500">Live contribution matrix for all members</p>
+            </div>
+            <p className="text-xs text-stone-500 mt-0.5">Live contribution matrix for all members</p>
           </div>
           {isAdmin && (
             <button
               onClick={() => onOpenPaymentModal(undefined, selectedMonth)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-colors shrink-0"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-colors shrink-0 self-start sm:self-auto whitespace-nowrap"
             >
               <PlusCircle className="w-3.5 h-3.5" />
               <span>Record Payment</span>
