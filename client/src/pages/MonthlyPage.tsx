@@ -3,6 +3,8 @@ import type { MonthlySummary, Member } from '../types';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { ProgressBar } from '../components/ProgressBar';
+import { CheckCircle2, XCircle, CreditCard, Sparkles } from 'lucide-react';
+import { getMemberAvatarGradient } from '../utils/avatar';
 
 interface MonthlyPageProps {
   onOpenPaymentModal: (memberId?: number, month?: string) => void;
@@ -111,55 +113,71 @@ export const MonthlyPage: React.FC<MonthlyPageProps> = ({
             />
           </div>
 
-          {/* Members Matrix */}
-          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="p-4 bg-stone-50 border-b border-stone-200 flex items-center justify-between">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-stone-600">
-                Member Contribution List
-              </span>
-              <span className="text-xs font-bold text-stone-500">
+          {/* Members Matrix Section */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-stone-600 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                <span>Member Contribution List</span>
+              </h3>
+              <span className="text-xs font-bold text-amber-900 bg-amber-100 border border-amber-200 px-2.5 py-0.5 rounded-full">
                 {monthlyData.paidCount} Paid / {monthlyData.pendingCount} Pending
               </span>
             </div>
 
-            <div className="divide-y divide-stone-100">
+            {/* Individual Member Elevated Cards */}
+            <div className="grid grid-cols-1 gap-3">
               {monthlyData.members.map((m) => {
                 const isPaid = m.status === 'Paid';
+                const avatarGradient = getMemberAvatarGradient(m.name);
+
                 return (
                   <div
                     key={m.memberId}
-                    className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-amber-50/20 transition-colors"
+                    className="bg-white rounded-2xl p-4 border border-stone-200/90 shadow-sm hover:shadow-md hover:border-amber-300 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5"
                   >
-                    <div className="flex items-center gap-3">
+                    {/* Left: Avatar & Member Info */}
+                    <div className="flex items-center gap-3.5">
                       <div
-                        className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-base shadow-sm ${
-                          isPaid ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
-                        }`}
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shadow-md shrink-0 ${avatarGradient}`}
                       >
                         {m.name.charAt(0)}
                       </div>
                       <div>
-                        <h3 className="font-bold text-stone-900 text-base">{m.name}</h3>
-                        <p className="text-xs text-stone-500">
-                          Monthly Contribution: <span className="font-semibold text-stone-700">₹{m.monthlyContribution.toLocaleString()}</span>
+                        <h4 className="font-extrabold text-stone-900 text-base leading-snug">{m.name}</h4>
+                        <p className="text-xs text-stone-500 mt-0.5">
+                          Monthly Contribution: <span className="font-bold text-stone-800">₹{m.monthlyContribution.toLocaleString()}</span>
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-stone-100">
+                    {/* Right: Payment Status, Method Tag & CTA */}
+                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-stone-100">
                       <div className="text-left sm:text-right">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-2">
                           <span
-                            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black ${
+                            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black shadow-2xs ${
                               isPaid
                                 ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                                 : 'bg-rose-100 text-rose-800 border border-rose-300'
                             }`}
                           >
-                            {isPaid ? '✅ Paid' : '❌ Pending'}
+                            {isPaid ? (
+                              <>
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                <span>Paid</span>
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="w-3.5 h-3.5 text-rose-600" />
+                                <span>Pending</span>
+                              </>
+                            )}
                           </span>
+
                           {isPaid && m.paymentMethod && (
-                            <span className="text-[11px] font-bold text-stone-600 bg-stone-100 px-2 py-0.5 rounded-md">
+                            <span className="text-[11px] font-bold text-stone-600 bg-stone-100 border border-stone-200 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                              <CreditCard className="w-3 h-3 text-stone-400" />
                               {m.paymentMethod}
                             </span>
                           )}
@@ -175,7 +193,11 @@ export const MonthlyPage: React.FC<MonthlyPageProps> = ({
                       {isAdmin && (
                         <button
                           onClick={() => onOpenPaymentModal(m.memberId, selectedMonth)}
-                          className="px-3 py-1.5 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl transition-colors shadow-sm"
+                          className={`px-4 py-2 text-xs font-extrabold rounded-xl transition-all shadow-sm ${
+                            isPaid
+                              ? 'bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300'
+                              : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20'
+                          }`}
                         >
                           {isPaid ? 'Edit Payment' : 'Mark as Paid'}
                         </button>
@@ -191,3 +213,4 @@ export const MonthlyPage: React.FC<MonthlyPageProps> = ({
     </div>
   );
 };
+

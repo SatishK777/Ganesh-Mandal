@@ -3,6 +3,7 @@ import { api } from '../api/client';
 import type { Member, Contribution } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { UserPlus, Phone, FileText, ChevronRight, Edit3, Trash2 } from 'lucide-react';
+import { getMemberAvatarGradient } from '../utils/avatar';
 
 interface MembersPageProps {
   onOpenMemberModal: (member?: Member | null) => void;
@@ -149,6 +150,7 @@ export const MembersPage: React.FC<MembersPageProps> = ({ onOpenMemberModal }) =
               {members.map((m) => {
                 const isSelected = selectedMember?.id === m.id;
                 const summary = getMemberSummary(m);
+                const avatarGradient = getMemberAvatarGradient(m.name);
 
                 return (
                   <div
@@ -159,7 +161,7 @@ export const MembersPage: React.FC<MembersPageProps> = ({ onOpenMemberModal }) =
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-amber-200 text-amber-900 flex items-center justify-center font-black text-sm">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shadow-sm ${avatarGradient}`}>
                         {m.name.charAt(0)}
                       </div>
                       <div>
@@ -188,12 +190,13 @@ export const MembersPage: React.FC<MembersPageProps> = ({ onOpenMemberModal }) =
           {selectedMember ? (
             (() => {
               const summary = getMemberSummary(selectedMember);
+              const avatarGradient = getMemberAvatarGradient(selectedMember.name);
               return (
                 <div className="bg-white rounded-2xl border border-amber-200/90 shadow-md p-5 space-y-5 animate-fadeIn">
                   {/* Member Detail Header */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl festive-gradient text-white flex items-center justify-center font-black text-xl shadow-md">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-md ${avatarGradient}`}>
                         {selectedMember.name.charAt(0)}
                       </div>
                       <div>

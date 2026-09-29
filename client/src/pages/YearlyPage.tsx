@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../api/client';
 import type { Member, Contribution } from '../types';
 import { CheckCircle2, XCircle, Grid, List } from 'lucide-react';
+import { getMemberAvatarGradient } from '../utils/avatar';
 
 export const CONTRIBUTION_MONTHS = [
   '2026-10',
@@ -108,11 +109,11 @@ export const YearlyPage: React.FC = () => {
       <div className="bg-amber-50 rounded-xl p-3 border border-amber-200/70 flex items-center justify-between text-xs font-semibold text-stone-700">
         <span className="text-stone-500">Legend:</span>
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1 text-emerald-800">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" /> ✅ Paid
+          <span className="flex items-center gap-1 text-emerald-800 font-bold">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Paid
           </span>
-          <span className="flex items-center gap-1 text-rose-800">
-            <XCircle className="w-4 h-4 text-rose-600" /> ❌ Pending
+          <span className="flex items-center gap-1 text-rose-800 font-bold">
+            <XCircle className="w-4 h-4 text-rose-600" /> Pending
           </span>
         </div>
       </div>
@@ -125,12 +126,13 @@ export const YearlyPage: React.FC = () => {
             CONTRIBUTION_MONTHS.forEach((month) => {
               if (paidMap.get(`${m.id}_${month}`)) paidCount++;
             });
+            const avatarGradient = getMemberAvatarGradient(m.name);
 
             return (
-              <div key={m.id} className="bg-white rounded-2xl border border-amber-200/80 shadow-sm p-4 space-y-3">
+              <div key={m.id} className="bg-white rounded-2xl border border-amber-200/80 shadow-sm p-4 space-y-3 hover:border-amber-300 transition-colors">
                 <div className="flex items-center justify-between border-b border-stone-100 pb-2.5">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center font-extrabold text-sm">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm shadow-md ${avatarGradient}`}>
                       {m.name.charAt(0)}
                     </div>
                     <div>
@@ -141,7 +143,7 @@ export const YearlyPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <span className="text-xs font-extrabold px-3 py-1 bg-amber-50 text-amber-900 rounded-full border border-amber-200">
+                  <span className="text-xs font-black px-3 py-1 bg-amber-100 text-amber-900 rounded-full border border-amber-300">
                     {paidCount} / 11 Paid
                   </span>
                 </div>
@@ -153,7 +155,7 @@ export const YearlyPage: React.FC = () => {
                     return (
                       <div
                         key={month}
-                        className={`p-2 rounded-xl text-center border transition-all ${
+                        className={`p-2 rounded-xl text-center border transition-all flex flex-col items-center justify-center ${
                           isPaid
                             ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
                             : 'bg-rose-50 border-rose-200 text-rose-900'
@@ -162,7 +164,13 @@ export const YearlyPage: React.FC = () => {
                         <span className="text-[10px] font-bold text-stone-500 uppercase block">
                           {MONTH_SHORT[month]}
                         </span>
-                        <span className="text-sm font-black block mt-0.5">{isPaid ? '✅' : '❌'}</span>
+                        <span className="mt-1">
+                          {isPaid ? (
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-rose-500" />
+                          )}
+                        </span>
                       </div>
                     );
                   })}
