@@ -21,7 +21,15 @@ app.use(express.json());
 // Initialize Database & Seed data if missing
 initDb();
 
-// API Routes
+// API Router mounted under /api and root
+const apiRouter = express.Router();
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/members', memberRoutes);
+apiRouter.use('/contributions', contributionRoutes);
+apiRouter.use('/expenses', expenseRoutes);
+apiRouter.use('/dashboard', dashboardRoutes);
+
+app.use('/api', apiRouter);
 app.use('/auth', authRoutes);
 app.use('/members', memberRoutes);
 app.use('/contributions', contributionRoutes);
