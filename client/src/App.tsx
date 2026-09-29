@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { AdminLoginModal } from './components/AdminLoginModal';
+import { InstallPWABanner } from './components/InstallPWABanner';
 import { PaymentModal } from './components/PaymentModal';
 import { MemberModal } from './components/MemberModal';
 import { ExpenseModal } from './components/ExpenseModal';
@@ -105,6 +106,9 @@ export const AppContent: React.FC = () => {
 
       {/* Admin Login Dialog */}
       <AdminLoginModal />
+
+      {/* PWA App Install Banner */}
+      <InstallPWABanner />
 
       {/* Action Modals */}
       <PaymentModal
