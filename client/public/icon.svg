@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="128" fill="#ea580c"/>
+  <circle cx="256" cy="256" r="210" fill="#fff7ed" opacity="0.15"/>
+  <path d="M256 90 C 230 90, 210 110, 210 135 C 210 160, 230 180, 256 180 C 282 180, 302 160, 302 135 C 302 110, 282 90, 256 90 Z" fill="#f97316"/>
+  <path d="M256 180 L 256 290 C 256 340, 310 340, 310 300 C 310 270, 285 270, 285 290" stroke="#ffffff" stroke-width="28" stroke-linecap="round" fill="none"/>
+  <circle cx="215" cy="210" r="16" fill="#ffffff"/>
+  <circle cx="297" cy="210" r="16" fill="#ffffff"/>
+  <path d="M190 280 Q 256 310 322 280" stroke="#ffffff" stroke-width="20" stroke-linecap="round" fill="none"/>
+  <path d="M256 60 L 256 90" stroke="#fef08a" stroke-width="16" stroke-linecap="round"/>
+  <path d="M220 80 Q 256 50 292 80" stroke="#fef08a" stroke-width="14" fill="none"/>
+  <text x="256" y="440" font-family="system-ui, sans-serif" font-weight="900" font-size="42" fill="#ffffff" text-anchor="middle" letter-spacing="2">MANDAL FUND</text>
+</svg>

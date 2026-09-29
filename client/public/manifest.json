@@ -1,0 +1,18 @@
+{
+  "short_name": "Mandal Fund",
+  "name": "Ganesh Chaturthi Mandal Fund Tracker",
+  "description": "Transparently track monthly member contributions and Ganesh Chaturthi festival expenses",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#fff7ed",
+  "theme_color": "#ea580c",
+  "display": "standalone",
+  "orientation": "portrait"
+}

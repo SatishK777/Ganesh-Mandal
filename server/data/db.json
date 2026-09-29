@@ -1,0 +1,80 @@
+{
+  "admins": [
+    {
+      "id": 1,
+      "username": "satish01",
+      "passwordHash": "$2b$10$NQSGHxMLxlcCsQIEq6KAf.pVvLlp52E/mSC7AooNTMUju/R60l46e",
+      "createdAt": "2026-09-29T10:46:00.000Z"
+    }
+  ],
+  "members": [
+    {
+      "id": 1,
+      "name": "Satish",
+      "phone": "",
+      "monthlyContribution": 1000,
+      "joinedAt": "2026-10",
+      "isActive": 1,
+      "notes": "",
+      "createdAt": "2026-09-29T10:46:00.000Z",
+      "updatedAt": "2026-09-29T10:46:00.000Z"
+    },
+    {
+      "id": 2,
+      "name": "Alok",
+      "phone": "",
+      "monthlyContribution": 1000,
+      "joinedAt": "2026-10",
+      "isActive": 1,
+      "notes": "",
+      "createdAt": "2026-09-29T10:46:00.000Z",
+      "updatedAt": "2026-09-29T10:46:00.000Z"
+    },
+    {
+      "id": 3,
+      "name": "Rohan",
+      "phone": "",
+      "monthlyContribution": 1000,
+      "joinedAt": "2026-10",
+      "isActive": 1,
+      "notes": "",
+      "createdAt": "2026-09-29T10:46:00.000Z",
+      "updatedAt": "2026-09-29T10:46:00.000Z"
+    },
+    {
+      "id": 4,
+      "name": "Govinda",
+      "phone": "",
+      "monthlyContribution": 1000,
+      "joinedAt": "2026-10",
+      "isActive": 1,
+      "notes": "",
+      "createdAt": "2026-09-29T10:46:00.000Z",
+      "updatedAt": "2026-09-29T10:46:00.000Z"
+    },
+    {
+      "id": 5,
+      "name": "Hardik",
+      "phone": "",
+      "monthlyContribution": 1000,
+      "joinedAt": "2026-10",
+      "isActive": 1,
+      "notes": "",
+      "createdAt": "2026-09-29T10:46:00.000Z",
+      "updatedAt": "2026-09-29T10:46:00.000Z"
+    },
+    {
+      "id": 6,
+      "name": "Keyur",
+      "phone": "",
+      "monthlyContribution": 1000,
+      "joinedAt": "2026-10",
+      "isActive": 1,
+      "notes": "",
+      "createdAt": "2026-09-29T10:46:00.000Z",
+      "updatedAt": "2026-09-29T10:46:00.000Z"
+    }
+  ],
+  "contributions": [],
+  "expenses": []
+}
