@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { readDb, writeDb, Expense } from '../db.js';
+import {
+  getDbData,
+  createExpense,
+  updateExpenseById,
+  deleteExpenseById,
+  Expense,
+} from '../db.js';
 import { requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
@@ -20,8 +26,8 @@ export const EXPENSE_CATEGORIES = [
 ];
 
 // GET /expenses
-router.get('/', (req, res) => {
-  const dbData = readDb();
+router.get('/', async (req, res) => {
+  const dbData = await getDbData();
   const expenses = [...dbData.expenses].sort((a, b) => (b.expenseDate > a.expenseDate ? 1 : -1));
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
 
@@ -32,9 +38,9 @@ router.get('/', (req, res) => {
 });
 
 // GET /expenses/:id
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   const id = Number(req.params.id);
-  const dbData = readDb();
+  const dbData = await getDbData();
   const expense = dbData.expenses.find((e) => e.id === id);
 
   if (!expense) {
@@ -44,7 +50,7 @@ router.get('/:id', (req, res) => {
 });
 
 // POST /expenses (Admin only)
-router.post('/', requireAdmin, (req, res) => {
+router.post('/', requireAdmin, async (req, res) => {
   const { title, category, amount, expenseDate, paymentMethod, description, receipt } = req.body;
 
   if (!title || typeof title !== 'string' || title.trim() === '') {
@@ -59,13 +65,8 @@ router.post('/', requireAdmin, (req, res) => {
   const validCat = EXPENSE_CATEGORIES.includes(category) ? category : 'Other';
   const validMethod = ['Cash', 'UPI', 'Bank Transfer', 'Other'].includes(paymentMethod) ? paymentMethod : 'UPI';
   const expDate = expenseDate || new Date().toISOString().split('T')[0];
-  const now = new Date().toISOString();
 
-  const dbData = readDb();
-  const nextId = dbData.expenses.length > 0 ? Math.max(...dbData.expenses.map((e) => e.id)) + 1 : 1;
-
-  const newExpense: Expense = {
-    id: nextId,
+  const newExpense = await createExpense({
     title: title.trim(),
     category: validCat,
     amount: expAmount,
@@ -73,63 +74,50 @@ router.post('/', requireAdmin, (req, res) => {
     paymentMethod: validMethod,
     description: description || '',
     receipt: receipt || '',
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  dbData.expenses.push(newExpense);
-  writeDb(dbData);
+  });
 
   res.status(201).json(newExpense);
 });
 
 // PATCH /expenses/:id (Admin only)
-router.patch('/:id', requireAdmin, (req, res) => {
+router.patch('/:id', requireAdmin, async (req, res) => {
   const id = Number(req.params.id);
-  const dbData = readDb();
-  const index = dbData.expenses.findIndex((e) => e.id === id);
+  const { title, category, amount, expenseDate, paymentMethod, description, receipt } = req.body;
 
-  if (index === -1) {
+  let newAmount = undefined;
+  if (amount !== undefined) {
+    newAmount = parseInt(amount, 10);
+    if (newAmount <= 0) {
+      return res.status(400).json({ error: 'Expense amount must be a positive number' });
+    }
+  }
+
+  const updated = await updateExpenseById(id, {
+    ...(title !== undefined && { title: title.trim() }),
+    ...(category !== undefined && { category }),
+    ...(newAmount !== undefined && { amount: newAmount }),
+    ...(expenseDate !== undefined && { expenseDate }),
+    ...(paymentMethod !== undefined && { paymentMethod }),
+    ...(description !== undefined && { description }),
+    ...(receipt !== undefined && { receipt }),
+  });
+
+  if (!updated) {
     return res.status(404).json({ error: 'Expense not found' });
   }
 
-  const existing = dbData.expenses[index];
-  const { title, category, amount, expenseDate, paymentMethod, description, receipt } = req.body;
-
-  const newAmount = amount !== undefined ? parseInt(amount, 10) : existing.amount;
-  if (newAmount <= 0) {
-    return res.status(400).json({ error: 'Expense amount must be a positive number' });
-  }
-
-  const updated: Expense = {
-    ...existing,
-    title: title !== undefined ? title.trim() : existing.title,
-    category: category !== undefined ? category : existing.category,
-    amount: newAmount,
-    expenseDate: expenseDate !== undefined ? expenseDate : existing.expenseDate,
-    paymentMethod: paymentMethod !== undefined ? paymentMethod : existing.paymentMethod,
-    description: description !== undefined ? description : existing.description,
-    receipt: receipt !== undefined ? receipt : existing.receipt,
-    updatedAt: new Date().toISOString(),
-  };
-
-  dbData.expenses[index] = updated;
-  writeDb(dbData);
   res.json(updated);
 });
 
 // DELETE /expenses/:id (Admin only)
-router.delete('/:id', requireAdmin, (req, res) => {
+router.delete('/:id', requireAdmin, async (req, res) => {
   const id = Number(req.params.id);
-  const dbData = readDb();
-  const index = dbData.expenses.findIndex((e) => e.id === id);
+  const success = await deleteExpenseById(id);
 
-  if (index === -1) {
+  if (!success) {
     return res.status(404).json({ error: 'Expense not found' });
   }
 
-  dbData.expenses.splice(index, 1);
-  writeDb(dbData);
   res.json({ message: 'Expense deleted successfully' });
 });
 

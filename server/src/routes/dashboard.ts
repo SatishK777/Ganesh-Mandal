@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { readDb, CONTRIBUTION_MONTHS, MONTH_NAMES } from '../db.js';
+import { getDbData, CONTRIBUTION_MONTHS, MONTH_NAMES } from '../db.js';
 
 const router = Router();
 
-router.get('/summary', (req, res) => {
-  const dbData = readDb();
+router.get('/summary', async (req, res) => {
+  const dbData = await getDbData();
 
   // 1. Members count
   const activeMembers = dbData.members.filter((m) => m.isActive === 1);
@@ -107,13 +107,13 @@ router.get('/summary', (req, res) => {
   });
 });
 
-router.get('/monthly-summary', (req, res) => {
+router.get('/monthly-summary', async (req, res) => {
   const month = (req.query.month as string) || '2026-10';
   if (!CONTRIBUTION_MONTHS.includes(month)) {
     return res.status(400).json({ error: 'Invalid month parameter' });
   }
 
-  const dbData = readDb();
+  const dbData = await getDbData();
   const activeMembers = [...dbData.members]
     .filter((m) => m.isActive === 1)
     .sort((a, b) => a.name.localeCompare(b.name));

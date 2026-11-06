@@ -1,18 +1,18 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { readDb } from '../db.js';
+import { getDbData } from '../db.js';
 import { JWT_SECRET, requireAdmin, AuthenticatedRequest } from '../middleware/auth.js';
 
 const router = Router();
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({ error: 'Username and password are required' });
   }
 
-  const db = readDb();
+  const db = await getDbData();
   const admin = db.admins.find((a) => a.username === username);
 
   if (!admin) {

@@ -18,9 +18,6 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Initialize Database & Seed data if missing
-initDb();
-
 // API Router mounted under /api and root
 const apiRouter = express.Router();
 apiRouter.use('/auth', authRoutes);
@@ -50,6 +47,13 @@ if (fs.existsSync(clientDist)) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`🙏 Ganesh Mandal Server running on http://localhost:${PORT}`);
-});
+// Initialize Database & Start Server
+async function startServer() {
+  await initDb();
+
+  app.listen(PORT, () => {
+    console.log(`🙏 Ganesh Mandal Server running on http://localhost:${PORT}`);
+  });
+}
+
+startServer();
