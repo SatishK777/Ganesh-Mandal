@@ -18,8 +18,23 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
+// Database status handler
+const getDbStatus = (req: express.Request, res: express.Response) => {
+  res.json({
+    status: isMongoActive ? 'connected' : 'fallback',
+    storage: isMongoActive ? 'MongoDB Atlas (Persistent Cloud)' : 'Local File db.json (Temporary Fallback)',
+    isMongoActive,
+    hasMongoUriEnv: !!process.env.MONGODB_URI,
+    databaseName: mongoDbName,
+    mongoConnectionError,
+    time: new Date().toISOString(),
+  });
+};
+
 // API Router mounted under /api and root
 const apiRouter = express.Router();
+apiRouter.get('/db-status', getDbStatus);
+apiRouter.get('/health', getDbStatus);
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/members', memberRoutes);
 apiRouter.use('/contributions', contributionRoutes);
@@ -33,22 +48,10 @@ app.use('/contributions', contributionRoutes);
 app.use('/expenses', expenseRoutes);
 app.use('/dashboard', dashboardRoutes);
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', time: new Date().toISOString() });
-});
-
-// Database status & diagnostic endpoint
-app.get('/api/db-status', (req, res) => {
-  res.json({
-    status: isMongoActive ? 'connected' : 'fallback',
-    storage: isMongoActive ? 'MongoDB Atlas (Persistent Cloud)' : 'Local File db.json (Temporary Fallback)',
-    isMongoActive,
-    hasMongoUriEnv: !!process.env.MONGODB_URI,
-    databaseName: mongoDbName,
-    mongoConnectionError,
-  });
-});
+// Health check & status endpoints
+app.get('/health', getDbStatus);
+app.get('/api/db-status', getDbStatus);
+app.get('/db-status', getDbStatus);
 
 // Serve static frontend in production if built
 const clientDist = path.join(process.cwd(), '../client/dist');
