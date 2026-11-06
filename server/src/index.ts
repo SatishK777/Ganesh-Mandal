@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
-import { initDb } from './db.js';
+import { initDb, isMongoActive, mongoConnectionError, mongoDbName } from './db.js';
 import authRoutes from './routes/auth.js';
 import memberRoutes from './routes/members.js';
 import contributionRoutes from './routes/contributions.js';
@@ -36,6 +36,18 @@ app.use('/dashboard', dashboardRoutes);
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
+});
+
+// Database status & diagnostic endpoint
+app.get('/api/db-status', (req, res) => {
+  res.json({
+    status: isMongoActive ? 'connected' : 'fallback',
+    storage: isMongoActive ? 'MongoDB Atlas (Persistent Cloud)' : 'Local File db.json (Temporary Fallback)',
+    isMongoActive,
+    hasMongoUriEnv: !!process.env.MONGODB_URI,
+    databaseName: mongoDbName,
+    mongoConnectionError,
+  });
 });
 
 // Serve static frontend in production if built

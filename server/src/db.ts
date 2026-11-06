@@ -142,6 +142,8 @@ export const ContributionModel = mongoose.models.Contribution || mongoose.model(
 export const ExpenseModel = mongoose.models.Expense || mongoose.model('Expense', ExpenseSchema);
 
 export let isMongoActive = false;
+export let mongoConnectionError: string | null = null;
+export let mongoDbName: string | null = null;
 
 // --- Local File Storage Helpers ---
 export function readLocalDb(): DBData {
@@ -269,16 +271,20 @@ export async function initDb() {
         serverSelectionTimeoutMS: 5000,
       });
       isMongoActive = true;
-      console.log('🍃 Connected to MongoDB Atlas successfully! Payments will persist permanently.');
+      mongoConnectionError = null;
+      mongoDbName = mongoose.connection.name;
+      console.log(`🍃 Connected to MongoDB Atlas successfully (Database: ${mongoDbName})!`);
       await seedMongoInitialData();
-    } catch (err) {
+    } catch (err: any) {
       console.error('❌ Failed to connect to MongoDB, falling back to db.json:', err);
       isMongoActive = false;
+      mongoConnectionError = err?.message || String(err);
       readLocalDb();
     }
   } else {
     console.log('📂 MONGODB_URI not set. Using local server/data/db.json storage.');
     isMongoActive = false;
+    mongoConnectionError = 'MONGODB_URI environment variable is not configured in Render.';
     readLocalDb();
   }
 }
